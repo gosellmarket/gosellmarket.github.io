@@ -1,0 +1,4440 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <title>Gosell - Buy, Sell, Earn Stars</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    
+
+    
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff5e62;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        .flash {
+            animation: flash 2s infinite;
+        }
+        
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Floating Stars Animation */
+        .floating-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: var(--gold);
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: headerSlideDown 0.5s ease-out;
+        }
+        
+        @keyframes headerSlideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            position: relative;
+            white-space: nowrap;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--gold);
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            white-space: nowrap;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--gold);
+            color: var(--dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* New Hero Section Design */
+        .hero {
+            padding: 8rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
+            color: white;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 3rem;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            background-color: rgba(106, 17, 203, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: scaleIn 0.8s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            from { text-shadow: 0 0 5px rgba(255,255,255,0.3); }
+            to { text-shadow: 0 0 15px rgba(255,255,255,0.6); }
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin: 0 auto 2.5rem;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+        }
+        
+        .features {
+            padding: 5rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: var(--primary);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: rotate(15deg) scale(1.1);
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .feature-card p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .boost-feature-btn {
+            margin-top: auto;
+            align-self: center;
+            background-color: var(--gold);
+            color: var(--dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            width: fit-content;
+        }
+        
+        .boost-feature-btn:hover {
+            background-color: #e6c200;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .how-it-works {
+            padding: 5rem 1rem;
+            background: linear-gradient(135deg, rgba(106,17,203,0.05) 0%, rgba(37,117,252,0.05) 100%);
+        }
+        
+        .steps {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            align-items: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        
+        .step:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .step-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-right: 2rem;
+            color: var(--primary);
+            min-width: 60px;
+            text-align: center;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover .step-number {
+            transform: scale(1.1);
+        }
+        
+        .step-content h3 {
+            margin-bottom: 0.8rem;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .step-content p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .cta {
+            padding: 6rem 1rem;
+            text-align: center;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-white {
+            background-color: white;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+        }
+        
+        .btn-white:hover {
+            background-color: rgba(255,255,255,0.9);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 4rem 1rem 2rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--gold);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column ul li a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .footer-column p {
+            color: #adb5bd;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-3px);
+            background: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #495057;
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: modalSlideIn 0.3s ease-out forwards;
+        }
+        
+        @keyframes modalSlideIn {
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(106,17,203,0.15);
+        }
+        
+        /* User Dashboard Styles */
+        .dashboard {
+            display: none;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            position: relative;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .profile-pic:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-info h2 {
+            margin-bottom: 0.3rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .user-info p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .user-stats {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            min-width: 100px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .stat:hover .stat-value,
+        .stat:hover .stat-label {
+            color: white;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+        }
+        
+        .dashboard-nav button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            white-space: nowrap;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-nav button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-nav button.active {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .dashboard-nav button.active::after {
+            display: none;
+        }
+        
+        .dashboard-nav button:hover:not(.active) {
+            background: rgba(106,17,203,0.1);
+        }
+        
+        .dashboard-nav button:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .dashboard-content {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-height: 500px;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        /* Profile Picture Preview in Settings */
+        .profile-pic-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .profile-pic-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .profile-pic-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Profile Picture Upload Section */
+        .profile-pic-upload {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        /* Scroll to top button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Leadership Board Styles */
+        .leaderboard-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .leaderboard-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--primary);
+            position: sticky;
+            top: 0;
+        }
+        
+        .leaderboard-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .leaderboard-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .leaderboard-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        
+        .leaderboard-actions .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Rank badges */
+        .rank-1 {
+            color: var(--gold);
+            font-weight: bold;
+        }
+        
+        .rank-2 {
+            color: var(--silver);
+            font-weight: bold;
+        }
+        
+        .rank-3 {
+            color: var(--bronze);
+            font-weight: bold;
+        }
+        
+        /* Marketplace Styles */
+        .marketplace-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-color: #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+        
+        .product-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn-view {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Like/Dislike Buttons */
+        .like-dislike-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            justify-content: center;
+        }
+        
+        .like-btn, .dislike-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            color: #6c757d;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .like-btn:hover, .dislike-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        .like-btn.liked {
+            color: var(--success);
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+        
+        .dislike-btn.disliked {
+            color: var(--danger);
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+        
+        /* Create Product Form */
+        .image-upload {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .upload-area {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #ced4da;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6c757d;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .upload-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .upload-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--danger);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-image:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Social Links Selector */
+        .social-links-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .social-platform {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f8f9fa;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .social-platform:hover {
+            background-color: #e9ecef;
+        }
+        
+        .social-platform.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .social-platform i {
+            font-size: 1rem;
+        }
+        
+        .social-link-input {
+            display: none;
+            margin-top: 0.5rem;
+        }
+        
+        .social-link-input.active {
+            display: block;
+        }
+        
+        /* New Dashboard Features */
+        .dashboard-welcome {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-welcome::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .dashboard-welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dashboard-welcome h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .dashboard-welcome p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .dashboard-welcome-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-card-icon {
+            transform: rotate(15deg) scale(1.1);
+        }
+        
+        .stat-card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-card-value {
+            color: white;
+        }
+        
+        .stat-card-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-card-label {
+            color: white;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quick-action {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .quick-action:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .quick-action:hover .quick-action-icon {
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .quick-action-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-label {
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action:hover .quick-action-label {
+            color: white;
+        }
+        
+        /* Delete Account Button */
+        .delete-account-btn {
+            background-color: var(--danger);
+            color: white;
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .delete-account-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Paste Dialog Styles */
+        .paste-dialog {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 1rem;
+            z-index: 1000;
+            display: none;
+            max-width: 350px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .paste-dialog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .paste-dialog-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .close-paste-dialog {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .paste-dialog-content {
+            margin-bottom: 1rem;
+        }
+        
+        .paste-dialog-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        
+        /* Boost Product Button */
+        .boost-product-btn {
+            background-color: var(--gold);
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem auto 0;
+        }
+        
+        .boost-product-btn:hover {
+            background-color: #e6c200;
+            transform: translateY(-2px);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+            
+            .user-profile {
+                flex-direction: column;
+            }
+            
+            .user-stats {
+                justify-content: center;
+            }
+            
+            .profile-pic-upload {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-welcome-buttons {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero {
+                padding: 4rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-content {
+                padding: 2rem;
+            }
+            
+            .dashboard-nav {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .leaderboard-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .paste-dialog {
+                max-width: 300px;
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .cta h2 {
+                font-size: 2.2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-pic-upload {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .scroll-to-top {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .paste-dialog {
+                max-width: 280px;
+                bottom: 5px;
+                right: 5px;
+            }
+            
+            .dashboard-welcome h2 {
+                font-size: 1.8rem;
+            }
+            
+            .dashboard-welcome p {
+                font-size: 1rem;
+            }
+            
+            .dashboard-welcome-buttons {
+                flex-direction: column;
+            }
+            
+            .feature-card h3 {
+                font-size: 1.3rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.95rem;
+            }
+        }
+        
+
+
+/* Add this to your existing CSS */
+.dashboard-nav {
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* For Firefox */
+}
+
+.dashboard-nav::-webkit-scrollbar {
+    display: none; /* For Chrome/Safari */
+}
+
+.dashboard-nav button {
+    min-width: 120px; /* Adjust as needed */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.8rem 0.5rem; /* Reduced side padding */
+    font-size: 0.9rem; /* Slightly smaller font */
+}
+        
+        
+        
+        
+        
+    </style>
+</head>
+<body>
+    <!-- Floating Stars Background -->
+    <div class="floating-stars" id="floating-stars"></div>
+    
+    <!-- Home Screen -->
+    <div id="home-screen">
+        <header>
+            <div class="navbar">
+                <div class="logo">
+                    <i class="fas fa-bolt flash"></i> Gosell
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-primary" id="login-btn">Login</button>
+                    <button class="btn btn-outline" id="signup-btn">Sign Up</button>
+                </div>
+            </div>
+        </header>
+        
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Unlock Your Earning Potential with Gosell</h1>
+                <p>Join the revolutionary platform where every sale brings you closer to real cash rewards. Grow your business, connect with buyers, and earn stars that convert to money.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-white" id="hero-signup-btn">Get Started - It's Free</button>
+                    <button class="btn btn-outline" id="learn-more-btn">Learn More</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="features" id="features">
+            <h2 class="section-title">Why Choose Gosell?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3>Earn Real Cash</h3>
+                    <p>Unlike other platforms, Gosell rewards you with stars that convert to real money, just for using our platform. The more you sell, the more you earn.</p>
+                    <button class="boost-feature-btn" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Earning Potential&body=I want to maximize my earnings on Gosell'">
+                        <i class="fas fa-chart-line"></i> Maximize Earnings
+                    </button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Grow Your Network</h3>
+                    <p>Connect with other sellers and buyers, grow your followers, and increase your earning potential through our unique social marketplace.</p>
+                    <button class="boost-feature-btn" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Network Growth&body=I want to grow my network on Gosell'">
+                        <i class="fas fa-user-plus"></i> Grow Network
+                    </button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Boost Your Sales</h3>
+                    <p>Our marketplace gives your products maximum visibility to potential buyers across the country with advanced search and recommendation features.</p>
+                    <button class="boost-feature-btn" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Product Boost Request&body=I would like to boost my product on Gosell'">
+                        <i class="fas fa-rocket"></i> Boost Your Product
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="how-it-works" id="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Create Your Account</h3>
+                        <p>Sign up with your email, phone number, and business name to get started with 5 welcome bonus stars. Setup takes less than 2 minutes.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>List Your Products</h3>
+                        <p>Upload your products with images, descriptions, and categories. Earn 1 star for each product listed. Our system makes listing easy and fast.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Grow Your Network</h3>
+                        <p>Follow other users and get followed to earn more stars. Each follow earns you 1 star. Build your community and increase your visibility.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Sell & Earn</h3>
+                        <p>Make sales through the platform and watch your stars grow, converting to real cash rewards. Withdraw your earnings anytime.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Ready to Start Selling & Earning?</h2>
+                <p>Join thousands of sellers who are already maximizing their earnings with Gosell. Start your journey today with no upfront costs.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-white" id="bottom-signup-btn">Sign Up Now</button>
+                    <button class="btn btn-outline" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Partnership Inquiry&body=I am interested in partnering with Gosell'">Partner With Us</button>
+                </div>
+            </div>
+        </section>
+        
+        <footer id="contact">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Gosell</h3>
+                    <p>The e-commerce platform that pays you back. Sell your products and earn stars that convert to real cash. Start growing your business today.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/profile.php?id=61577491138865" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="mailto:gosellmarket@gmail.com"><i class="fas fa-envelope"></i></a>
+                        <a href="mailto:omaledestiny007@gmail.com"><i class="fas fa-code"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Boost My Product'">Boost Your Product</a></li>
+                        <li><a href="#" id="testimonials-link">Testimonials</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Help Request'">Help Center</a></li>
+                        
+                        
+                        <li><a href="#" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=FAQ Question'">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> <a href="mailto:gosellmarket@gmail.com">gosellmarket@gmail.com</a></li>
+                        <li><i class="fas fa-envelope"></i> <a href="mailto:omaledestiny007@gmail.com">omaledestiny007@gmail.com</a> (Developer)</li>
+                        
+                        <li><i class="fas fa-map-marker-alt"></i> Nigeria</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Gosell. Developed by Omale Destiny Unekuojo (Code Wizard). All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- User Dashboard (Hidden by default) -->
+    <div id="user-dashboard" class="dashboard" style="display: none;">
+        <div class="dashboard-header">
+            <div class="user-profile">
+                <div class="profile-pic" id="user-profile-pic">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h2 id="username-display">Username</h2>
+                    <p id="user-country">Country</p>
+                </div>
+            </div>
+            <div class="user-stats">
+                <div class="stat">
+                    <div class="stat-value" id="stars-count">5</div>
+                    <div class="stat-label">Stars</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="followers-count">0</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="products-count">0</div>
+                    <div class="stat-label">Products</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-nav">
+            <button class="active" data-section="profile">Profile</button>
+            <button data-section="marketplace">Marketplace</button>
+            <button data-section="create-product">Create Product</button>
+            <button data-section="my-products">My Products</button>
+            <button data-section="leaderboard">Leaderboard</button>
+            <button data-section="settings">Settings</button>
+            <button id="logout-btn">Logout</button>
+        </div>
+        
+        <div class="dashboard-content">
+            <!-- Profile Section -->
+            <div id="profile-section">
+                <div class="dashboard-welcome">
+                    <div class="dashboard-welcome-content">
+                        <h2>Welcome Back, <span id="welcome-username">User</span>!</h2>
+                        <p>You have <span id="welcome-stars">5</span> stars. Keep growing your network and listing products to earn more!</p>
+                        <div class="dashboard-welcome-buttons">
+                            <button class="btn btn-white" data-section="create-product">List a New Product</button>
+                            <button class="btn btn-outline" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Boost My Product&body=I would like to boost my product on Gosell'">
+                                <i class="fas fa-rocket"></i> Boost Product
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-card-value" id="profile-stars">5</div>
+                        <div class="stat-card-label">Total Stars</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-card-value" id="profile-followers">0</div>
+                        <div class="stat-card-label">Followers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="stat-card-value" id="profile-products">0</div>
+                        <div class="stat-card-label">Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="stat-card-value" id="profile-following">0</div>
+                        <div class="stat-card-label">Following</div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="quick-action" data-section="marketplace">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="quick-action-label">Browse Marketplace</div>
+                    </div>
+                    <div class="quick-action" data-section="create-product">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="quick-action-label">Add Product</div>
+                    </div>
+                    <div class="quick-action" data-section="my-products">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="quick-action-label">My Products</div>
+                    </div>
+                    <div class="quick-action" data-section="leaderboard">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="quick-action-label">Leaderboard</div>
+                    </div>
+                </div>
+                
+                <h2>Your Profile</h2>
+                <div class="profile-info" style="margin-top: 1.5rem;">
+                    <div class="profile-pic-upload">
+                        <div class="profile-pic-preview" id="profile-pic-preview">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+                            <button class="btn btn-primary" id="upload-profile-pic">Upload Profile Picture</button>
+                            <p style="font-size: 0.8rem; color: #6c757d; margin-top: 0.5rem;">JPG, PNG max 2MB</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profile-bio">Bio/Description</label>
+                        <textarea id="profile-bio" class="form-control" rows="4" placeholder="Tell others about yourself or your business"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Social Media Links</label>
+                        <div class="social-links-selector" id="social-links-selector">
+                            <div class="social-platform" data-platform="facebook">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>Facebook</span>
+                            </div>
+                            <div class="social-platform" data-platform="twitter">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </div>
+                            <div class="social-platform" data-platform="instagram">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </div>
+                            <div class="social-platform" data-platform="linkedin">
+                                <i class="fab fa-linkedin-in"></i>
+                                <span>LinkedIn</span>
+                            </div>
+                            <div class="social-platform" data-platform="whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>WhatsApp</span>
+                            </div>
+                            <div class="social-platform" data-platform="website">
+                                <i class="fas fa-globe"></i>
+                                <span>Website</span>
+                            </div>
+                        </div>
+                        
+                        <div id="social-links-container">
+                            <!-- Social link inputs will be added here -->
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="save-profile">Save Changes</button>
+                </div>
+            </div>
+            
+            <!-- Marketplace Section -->
+            <div id="marketplace-section" style="display: none;">
+                <h2>Marketplace</h2>
+                <div style="margin: 1rem 0; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <select id="marketplace-category" class="form-control" style="flex-grow: 1;">
+                        <option value="">All Categories</option>
+                        <option value="books">Books</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="vehicles">Vehicles</option>
+                        <option value="property">Property</option>
+                        <option value="services">Services</option>
+                        <option value="online-courses">Online Courses</option>
+                        <option value="others">Others</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Boost My Product&body=I would like to boost my product on Gosell'">
+                        <i class="fas fa-rocket"></i> Boost Product
+                    </button>
+                </div>
+                
+                <div class="marketplace-container">
+                    <div class="products-grid" id="marketplace-products">
+                        <!-- Products will be loaded here -->
+                        <p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6c757d;">No products available yet. Be the first to list a product!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Create Product Section -->
+            <div id="create-product-section" style="display: none;">
+                <h2>Create New Product</h2>
+                <form id="product-form">
+                    <div class="form-group">
+                        <label>Product Images (max 3)</label>
+                        <div class="image-upload">
+                            <div class="upload-area" id="upload-area-1">
+                                <i class="fas fa-plus"></i>
+                                <input type="file" id="product-image-1" accept="image/*" style="display: none;">
+                            </div>
+                            <div class="upload-area" id="upload-area-2" style="display: none;">
+                                <i class="fas fa-plus"></i>
+                                <input type="file" id="product-image-2" accept="image/*" style="display: none;">
+                            </div>
+                            <div class="upload-area" id="upload-area-3" style="display: none;">
+                                <i class="fas fa-plus"></i>
+                                <input type="file" id="product-image-3" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-title">Product Title</label>
+                        <input type="text" id="product-title" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description">Product Description</label>
+                        <textarea id="product-description" class="form-control" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-category">Category</label>
+                        <select id="product-category" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="books">Books</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="fashion">Fashion</option>
+                            <option value="home">Home & Garden</option>
+                            <option value="vehicles">Vehicles</option>
+                            <option value="property">Property</option>
+                            <option value="services">Services</option>
+                            <option value="online-courses">Online Courses</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="price-group">
+                        <label for="product-price">Price (₦)</label>
+                        <input type="text" id="product-price" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group" id="location-group">
+                        <label for="product-location">Location</label>
+                        <input type="text" id="product-location" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group" id="course-dates-group" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label for="course-start-date">Start Date</label>
+                                <input type="date" id="course-start-date" class="form-control">
+                            </div>
+                            <div>
+                                <label for="course-end-date">End Date</label>
+                                <input type="date" id="course-end-date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-contact">Contact Phone</label>
+                        <input type="tel" id="product-contact" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-link">Contact Link (WhatsApp, Telegram, etc.)</label>
+                        <input type="url" id="product-link" class="form-control" placeholder="https://wa.me/234XXXXXXXXXX" required>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button type="submit" class="btn btn-primary">List Product</button>
+                        <button type="button" class="btn btn-outline" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Boost My Product&body=I would like to boost my product on Gosell'">
+                            <i class="fas fa-rocket"></i> Boost After Listing
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- My Products Section -->
+            <div id="my-products-section" style="display: none;">
+                <h2>My Products</h2>
+                <div class="marketplace-container">
+                    <div class="products-grid" id="user-products">
+                        <!-- User's products will be loaded here -->
+                        <p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6c757d;">You haven't listed any products yet. Create your first product!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Leaderboard Section -->
+            <div id="leaderboard-section" style="display: none;">
+                <h2>Leaderboard</h2>
+                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <input type="text" id="leaderboard-search" class="form-control" placeholder="Search users by username..." style="flex-grow: 1;">
+                    <button class="btn btn-primary" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Leaderboard Boost&body=I would like to boost my position on the leaderboard'">
+                        <i class="fas fa-rocket"></i> Boost Position
+                    </button>
+                </div>
+                
+                <div class="leaderboard-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>User</th>
+                                <th>Stars</th>
+                                <th>Followers</th>
+                                <th>Products</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <!-- Leaderboard data will be loaded here -->
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">No users found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div id="settings-section" style="display: none;">
+                <h2>Account Settings</h2>
+                <form class="settings-form" id="settings-form">
+                    <div class="form-group">
+                        <label for="settings-username">Username (Business Name)</label>
+                        <input type="text" id="settings-username" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="settings-email">Email Address</label>
+                        <input type="email" id="settings-email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="settings-phone">Phone Number</label>
+                        <input type="tel" id="settings-phone" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="settings-country">Country</label>
+                        <select id="settings-country" class="form-control" required>
+                            <option value="">Select Country</option>
+                            <option value="nigeria">Nigeria</option>
+                            <option value="ghana">Ghana</option>
+                            <option value="kenya">Kenya</option>
+                            <option value="south-africa">South Africa</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="current-password">Current Password (required for changes)</label>
+                        <input type="password" id="current-password" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-password">New Password (leave blank to keep current)</label>
+                        <input type="password" id="new-password" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" class="form-control">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="delete-account-btn" id="delete-account-btn">Delete Account</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Scroll to top button -->
+        <div class="scroll-to-top" id="scroll-to-top">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to Gosell</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email or Username</label>
+                    <input type="text" id="login-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">Don't have an account? <a href="#" id="switch-to-signup">Sign up</a></p>
+        </div>
+    </div>
+    
+    <!-- Signup Modal -->
+    <div class="modal" id="signup-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Your Gosell Account</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-username">Username (Business Name)</label>
+                    <input type="text" id="signup-username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <input type="tel" id="signup-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-country">Country</label>
+                    <select id="signup-country" class="form-control" required>
+                        <option value="">Select Country</option>
+                        <option value="nigeria">Nigeria</option>
+                        <option value="ghana">Ghana</option>
+                        <option value="kenya">Kenya</option>
+                        <option value="south-africa">South Africa</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">Already have an account? <a href="#" id="switch-to-login">Login</a></p>
+        </div>
+    </div>
+    
+    <!-- View Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="product-modal-title">Product Details</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="product-modal-content">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- View User Profile Modal -->
+    <div class="modal" id="user-profile-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="user-profile-modal-title">User Profile</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="user-profile-modal-content">
+                <!-- User profile details will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Developer Console Protection Modal -->
+    <div class="modal" id="dev-console-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Developer Console Access</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <p>Access to developer tools is restricted. Please enter the password to continue.</p>
+            </div>
+            <div class="form-group">
+                <label for="console-password">Password</label>
+                <input type="password" id="console-password" class="form-control" placeholder="Enter password">
+            </div>
+            <button class="btn btn-primary" id="console-submit">Submit</button>
+        </div>
+    </div>
+    
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal" id="delete-account-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Account</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p>All your data including products, followers, and stars will be permanently deleted.</p>
+            </div>
+            <div class="form-group">
+                <label for="delete-password">Enter your password to confirm</label>
+                <input type="password" id="delete-password" class="form-control" placeholder="Your password" required>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn btn-primary" id="confirm-delete-account">Delete Account</button>
+                <button class="btn btn-outline" id="cancel-delete-account">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Paste Dialog -->
+    <div class="paste-dialog" id="paste-dialog">
+        <div class="paste-dialog-header">
+            <div class="paste-dialog-title">Paste from Clipboard</div>
+            <button class="close-paste-dialog">&times;</button>
+        </div>
+        <div class="paste-dialog-content">
+            <p>Would you like to paste the content from your clipboard?</p>
+            <div class="form-group">
+                <textarea id="paste-content" class="form-control" rows="3" placeholder="Paste content here"></textarea>
+            </div>
+        </div>
+        <div class="paste-dialog-actions">
+            <button class="btn btn-primary" id="paste-confirm">Paste</button>
+            <button class="btn btn-outline" id="paste-cancel">Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const homeScreen = document.getElementById('home-screen');
+        const userDashboard = document.getElementById('user-dashboard');
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const productModal = document.getElementById('product-modal');
+        const userProfileModal = document.getElementById('user-profile-modal');
+        const devConsoleModal = document.getElementById('dev-console-modal');
+        const deleteAccountModal = document.getElementById('delete-account-modal');
+        const pasteDialog = document.getElementById('paste-dialog');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const heroSignupBtn = document.getElementById('hero-signup-btn');
+        const bottomSignupBtn = document.getElementById('bottom-signup-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        const confirmDeleteAccountBtn = document.getElementById('confirm-delete-account');
+        const cancelDeleteAccountBtn = document.getElementById('cancel-delete-account');
+        const closeModals = document.querySelectorAll('.close-modal');
+        const switchToSignup = document.getElementById('switch-to-signup');
+        const switchToLogin = document.getElementById('switch-to-login');
+        const dashboardNavButtons = document.querySelectorAll('.dashboard-nav button[data-section]');
+        const dashboardSections = document.querySelectorAll('.dashboard-content > div');
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        const closePasteDialog = document.querySelector('.close-paste-dialog');
+        const pasteConfirmBtn = document.getElementById('paste-confirm');
+        const pasteCancelBtn = document.getElementById('paste-cancel');
+        const pasteContent = document.getElementById('paste-content');
+        const floatingStars = document.getElementById('floating-stars');
+        const learnMoreBtn = document.getElementById('learn-more-btn');
+        const testimonialsLink = document.getElementById('testimonials-link');
+        
+        // User data (stored in localStorage)
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('gosell_users')) || [];
+        let products = JSON.parse(localStorage.getItem('gosell_products')) || [];
+        let activeInputElement = null; // To track which input field is active when pasting
+        
+        // Initialize the app
+        function init() {
+            // Create floating stars
+            createFloatingStars();
+            
+            // Event listeners
+            loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
+            signupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
+            heroSignupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
+            bottomSignupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
+            logoutBtn.addEventListener('click', logout);
+            deleteAccountBtn.addEventListener('click', () => deleteAccountModal.style.display = 'flex');
+            confirmDeleteAccountBtn.addEventListener('click', handleAccountDeletion);
+            cancelDeleteAccountBtn.addEventListener('click', () => deleteAccountModal.style.display = 'none');
+            closePasteDialog.addEventListener('click', () => pasteDialog.style.display = 'none');
+            pasteCancelBtn.addEventListener('click', () => pasteDialog.style.display = 'none');
+            pasteConfirmBtn.addEventListener('click', handlePasteConfirm);
+            learnMoreBtn.addEventListener('click', () => {
+                document.querySelector('#features').scrollIntoView({ behavior: 'smooth' });
+            });
+            testimonialsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelector('#how-it-works').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            closeModals.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    loginModal.style.display = 'none';
+                    signupModal.style.display = 'none';
+                    productModal.style.display = 'none';
+                    userProfileModal.style.display = 'none';
+                    devConsoleModal.style.display = 'none';
+                    deleteAccountModal.style.display = 'none';
+                });
+            });
+            
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'none';
+                signupModal.style.display = 'flex';
+            });
+            
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.style.display = 'none';
+                loginModal.style.display = 'flex';
+            });
+            
+            // Dashboard navigation
+            dashboardNavButtons.forEach(btn => {
+                if (btn.id !== 'logout-btn') {
+                    btn.addEventListener('click', () => {
+                        const section = btn.getAttribute('data-section');
+                        showDashboardSection(section);
+                        
+                        // Update active button
+                        dashboardNavButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                }
+            });
+            
+            // Quick actions
+            document.querySelectorAll('.quick-action').forEach(action => {
+                action.addEventListener('click', () => {
+                    const section = action.getAttribute('data-section');
+                    showDashboardSection(section);
+                    
+                    // Update active button
+                    dashboardNavButtons.forEach(b => b.classList.remove('active'));
+                    document.querySelector(`.dashboard-nav button[data-section="${section}"]`).classList.add('active');
+                });
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) loginModal.style.display = 'none';
+                if (e.target === signupModal) signupModal.style.display = 'none';
+                if (e.target === productModal) productModal.style.display = 'none';
+                if (e.target === userProfileModal) userProfileModal.style.display = 'none';
+                if (e.target === devConsoleModal) devConsoleModal.style.display = 'none';
+                if (e.target === deleteAccountModal) deleteAccountModal.style.display = 'none';
+                if (e.target === pasteDialog) pasteDialog.style.display = 'none';
+            });
+            
+            // Form submissions
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('signup-form').addEventListener('submit', handleSignup);
+            document.getElementById('product-form').addEventListener('submit', handleProductSubmit);
+            document.getElementById('settings-form').addEventListener('submit', handleSettingsUpdate);
+            document.getElementById('save-profile').addEventListener('click', handleProfileUpdate);
+            document.getElementById('console-submit').addEventListener('click', checkConsolePassword);
+            
+            // Profile picture upload
+            document.getElementById('upload-profile-pic').addEventListener('click', () => {
+                document.getElementById('profile-pic-input').click();
+            });
+            
+            document.getElementById('profile-pic-input').addEventListener('change', handleProfilePicUpload);
+            
+            // Image uploads for product
+            setupImageUploads();
+            
+            // Social links selector
+            setupSocialLinksSelector();
+            
+            // Scroll to top button
+            setupScrollToTop();
+            
+            // Category change handler
+            document.getElementById('product-category').addEventListener('change', handleCategoryChange);
+            
+            // Developer console protection
+            setupConsoleProtection();
+            
+            // Enhanced clipboard handling
+            setupClipboardHandling();
+            
+            // Check if user is already logged in
+            const loggedInUserId = localStorage.getItem('gosell_loggedInUser');
+            if (loggedInUserId) {
+                const user = users.find(u => u.id === loggedInUserId);
+                if (user) {
+                    currentUser = user;
+                    homeScreen.style.display = 'none';
+                    userDashboard.style.display = 'block';
+                    updateUserInfo();
+                    showDashboardSection('profile');
+                }
+            }
+        }
+        
+        // Create floating stars animation
+        function createFloatingStars() {
+            const starsCount = 50;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const xPos = Math.random() * 100;
+                const yPos = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                
+                // Random animation duration
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 5;
+                
+                star.style.left = `${xPos}%`;
+                star.style.top = `${yPos}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDuration = `${duration}s`;
+                star.style.animationDelay = `${delay}s`;
+                
+                floatingStars.appendChild(star);
+            }
+        }
+        
+        // Handle paste confirmation
+        function handlePasteConfirm() {
+            if (activeInputElement) {
+                activeInputElement.value = pasteContent.value;
+                if (activeInputElement.type === 'url' && !pasteContent.value.match(/^https?:\/\//)) {
+                    activeInputElement.value = 'https://' + pasteContent.value;
+                }
+                pasteDialog.style.display = 'none';
+                activeInputElement = null;
+            }
+        }
+        
+        // Setup enhanced clipboard handling
+        function setupClipboardHandling() {
+            // Track focus on all input and textarea elements
+            document.addEventListener('focusin', function(e) {
+                if (e.target.matches('input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea')) {
+                    activeInputElement = e.target;
+                }
+            });
+            
+            // Handle paste events globally
+            document.addEventListener('paste', async function(e) {
+                // Only show paste dialog for text inputs and textareas
+                if (e.target.matches('input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea')) {
+                    try {
+                        e.preventDefault();
+                        const clipboardItems = await navigator.clipboard.read();
+                        
+                        for (const clipboardItem of clipboardItems) {
+                            for (const type of clipboardItem.types) {
+                                if (type === 'text/plain') {
+                                    const blob = await clipboardItem.getType(type);
+                                    const text = await blob.text();
+                                    
+                                    // Show paste dialog
+                                    pasteContent.value = text;
+                                    pasteDialog.style.display = 'block';
+                                    return;
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Failed to read clipboard contents:', err);
+                        // Fallback to default paste behavior
+                        const clipboardData = e.clipboardData || window.clipboardData;
+                        const pastedText = clipboardData.getData('text/plain');
+                        
+                        // Special handling for URL fields
+                        if (e.target.type === 'url' && !pastedText.match(/^https?:\/\//)) {
+                            e.target.value = 'https://' + pastedText;
+                        } else {
+                            // Default paste behavior
+                            const start = e.target.selectionStart;
+                            const end = e.target.selectionEnd;
+                            e.target.value = e.target.value.substring(0, start) + 
+                                            pastedText + 
+                                            e.target.value.substring(end);
+                        }
+                    }
+                }
+            });
+            
+            // Enable copy/cut for all text inputs
+            document.addEventListener('copy', function(e) {
+                if (e.target.matches('input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea')) {
+                    const selectedText = window.getSelection().toString();
+                    if (selectedText) {
+                        e.clipboardData.setData('text/plain', selectedText);
+                        e.preventDefault();
+                    }
+                }
+            });
+            
+            document.addEventListener('cut', function(e) {
+                if (e.target.matches('input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea')) {
+                    const selectedText = window.getSelection().toString();
+                    if (selectedText) {
+                        e.clipboardData.setData('text/plain', selectedText);
+                        
+                        // Remove the selected text
+                        const start = e.target.selectionStart;
+                        const end = e.target.selectionEnd;
+                        e.target.value = e.target.value.substring(0, start) + 
+                                        e.target.value.substring(end);
+                        e.target.setSelectionRange(start, start);
+                        
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+        
+        // Handle account deletion
+        function handleAccountDeletion() {
+            const password = document.getElementById('delete-password').value;
+            
+            if (password !== currentUser.password) {
+                alert('Incorrect password');
+                return;
+            }
+            
+            // Remove user's products
+            products = products.filter(p => p.userId !== currentUser.id);
+            
+            // Remove user from followers/following lists
+            users.forEach(user => {
+                user.followers = user.followers.filter(id => id !== currentUser.id);
+                user.following = user.following.filter(id => id !== currentUser.id);
+            });
+            
+            // Remove the user
+            users = users.filter(u => u.id !== currentUser.id);
+            
+            // Update localStorage
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            localStorage.setItem('gosell_products', JSON.stringify(products));
+            localStorage.removeItem('gosell_loggedInUser');
+            
+            // Reset UI
+            deleteAccountModal.style.display = 'none';
+            userDashboard.style.display = 'none';
+            homeScreen.style.display = 'block';
+            currentUser = null;
+            
+            alert('Your account has been permanently deleted.');
+        }
+        
+        // Setup developer console protection
+        function setupConsoleProtection() {
+            const password = "SELL007";
+            let consoleOpen = false;
+            
+            // Prevent F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'C') || 
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    devConsoleModal.style.display = 'flex';
+                    consoleOpen = true;
+                }
+            });
+            
+            // Check for console opening via right-click menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+            
+            // Periodically check if console is open
+            setInterval(function() {
+                if ((window.outerWidth - window.innerWidth) > 100 || 
+                    (window.outerHeight - window.innerHeight) > 100) {
+                    if (!consoleOpen) {
+                        devConsoleModal.style.display = 'flex';
+                        consoleOpen = true;
+                    }
+                }
+            }, 1000);
+        }
+        
+        // Check console password
+        function checkConsolePassword() {
+            const passwordInput = document.getElementById('console-password');
+            if (passwordInput.value === "SELL007") {
+                devConsoleModal.style.display = 'none';
+                passwordInput.value = '';
+            } else {
+                alert('Incorrect password');
+                passwordInput.value = '';
+            }
+        }
+        
+        // Setup scroll to top button
+        function setupScrollToTop() {
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('visible');
+                } else {
+                    scrollToTopBtn.classList.remove('visible');
+                }
+            });
+            
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+        
+        // Setup social links selector
+        function setupSocialLinksSelector() {
+            const socialPlatforms = document.querySelectorAll('.social-platform');
+            const socialLinksContainer = document.getElementById('social-links-container');
+            
+            socialPlatforms.forEach(platform => {
+                platform.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const platformName = platform.getAttribute('data-platform');
+                    
+                    // Toggle active state
+                    platform.classList.toggle('active');
+                    
+                    // Check if input already exists
+                    const existingInput = document.getElementById(`social-${platformName}`);
+                    
+                    if (platform.classList.contains('active') && !existingInput) {
+                        // Create input for this platform
+                        const inputGroup = document.createElement('div');
+                        inputGroup.className = 'form-group social-link-input active';
+                        inputGroup.id = `social-input-${platformName}`;
+                        
+                        let placeholder = '';
+                        let iconClass = '';
+                        
+                        switch (platformName) {
+                            case 'facebook':
+                                placeholder = 'https://facebook.com/yourpage';
+                                iconClass = 'fab fa-facebook-f';
+                                break;
+                            case 'twitter':
+                                placeholder = 'https://twitter.com/yourhandle';
+                                iconClass = 'fab fa-twitter';
+                                break;
+                            case 'instagram':
+                                placeholder = 'https://instagram.com/yourprofile';
+                                iconClass = 'fab fa-instagram';
+                                break;
+                            case 'linkedin':
+                                placeholder = 'https://linkedin.com/in/yourprofile';
+                                iconClass = 'fab fa-linkedin-in';
+                                break;
+                            case 'whatsapp':
+                                placeholder = 'https://wa.me/234XXXXXXXXXX';
+                                iconClass = 'fab fa-whatsapp';
+                                break;
+                            case 'website':
+                                placeholder = 'https://yourwebsite.com';
+                                iconClass = 'fas fa-globe';
+                                break;
+                        }
+                        
+                        inputGroup.innerHTML = `
+                            <label for="social-${platformName}">
+                                <i class="${iconClass}"></i> ${platform.textContent.trim()} URL
+                            </label>
+                            <input type="url" id="social-${platformName}" class="form-control" placeholder="${placeholder}">
+                        `;
+                        
+                        socialLinksContainer.appendChild(inputGroup);
+                        
+                        // If user already has this link, populate it
+                        if (currentUser && currentUser.socialLinks) {
+                            const userLink = currentUser.socialLinks.find(link => 
+                                link.includes(platformName) || 
+                                (platformName === 'website' && !['facebook', 'twitter', 'instagram', 'linkedin', 'whatsapp'].some(p => link.includes(p)))
+                            );
+                            
+                            if (userLink) {
+                                document.getElementById(`social-${platformName}`).value = userLink;
+                            }
+                        }
+                    } else if (!platform.classList.contains('active') && existingInput) {
+                        // Remove input for this platform
+                        document.getElementById(`social-input-${platformName}`).remove();
+                    }
+                });
+            });
+        }
+        
+        // Handle category change in product form
+        function handleCategoryChange() {
+            const category = this.value;
+            const courseDatesGroup = document.getElementById('course-dates-group');
+            
+            if (category === 'online-courses') {
+                courseDatesGroup.style.display = 'block';
+                document.getElementById('product-title').placeholder = 'Course Title';
+                document.getElementById('product-description').placeholder = 'Course Description';
+                document.getElementById('product-price').placeholder = 'Registration Fee';
+            } else {
+                courseDatesGroup.style.display = 'none';
+                document.getElementById('product-title').placeholder = '';
+                document.getElementById('product-description').placeholder = '';
+                document.getElementById('product-price').placeholder = '';
+            }
+        }
+        
+        // Show dashboard section
+        function showDashboardSection(section) {
+            dashboardSections.forEach(sec => sec.style.display = 'none');
+            document.getElementById(`${section}-section`).style.display = 'block';
+            
+            // Load data for the section if needed
+            if (section === 'marketplace') loadMarketplace();
+            if (section === 'my-products') loadUserProducts();
+            if (section === 'leaderboard') loadLeaderboard();
+            
+            // Scroll to top of the section
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const user = users.find(u => (u.email === email || u.username === email) && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('gosell_loggedInUser', user.id);
+                loginModal.style.display = 'none';
+                homeScreen.style.display = 'none';
+                userDashboard.style.display = 'block';
+                
+                // Update user info in dashboard
+                updateUserInfo();
+                
+                // Show profile section by default
+                showDashboardSection('profile');
+            } else {
+                alert('Invalid email/username or password');
+            }
+        }
+        
+        // Handle signup
+        function handleSignup(e) {
+            e.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const phone = document.getElementById('signup-phone').value;
+            const country = document.getElementById('signup-country').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Check for duplicate username (case-insensitive)
+            if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                alert('Username already in use');
+                return;
+            }
+            
+            if (users.some(u => u.email === email)) {
+                alert('Email already in use');
+                return;
+            }
+            
+            const newUser = {
+                id: Date.now().toString(),
+                username,
+                email,
+                phone,
+                country,
+                password,
+                stars: 5,
+                followers: [],
+                following: [],
+                products: [],
+                bio: '',
+                socialLinks: [],
+                profilePic: null,
+                joined: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            currentUser = newUser;
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            localStorage.setItem('gosell_loggedInUser', newUser.id);
+            
+            signupModal.style.display = 'none';
+            homeScreen.style.display = 'none';
+            userDashboard.style.display = 'block';
+            
+            updateUserInfo();
+            showDashboardSection('profile');
+            
+            alert('Account created successfully! You received 5 welcome bonus stars.');
+        }
+        
+        // Handle logout
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('gosell_loggedInUser');
+            userDashboard.style.display = 'none';
+            homeScreen.style.display = 'block';
+            
+            document.getElementById('login-form').reset();
+            document.getElementById('signup-form').reset();
+        }
+        
+        // Update user info in dashboard
+        function updateUserInfo() {
+            if (!currentUser) return;
+            
+            document.getElementById('username-display').textContent = currentUser.username;
+            document.getElementById('user-country').textContent = currentUser.country;
+            document.getElementById('stars-count').textContent = currentUser.stars;
+            document.getElementById('followers-count').textContent = currentUser.followers.length;
+            document.getElementById('products-count').textContent = currentUser.products.length;
+            
+            // Update welcome section
+            document.getElementById('welcome-username').textContent = currentUser.username;
+            document.getElementById('welcome-stars').textContent = currentUser.stars;
+            
+            // Update profile stats cards
+            document.getElementById('profile-stars').textContent = currentUser.stars;
+            document.getElementById('profile-followers').textContent = currentUser.followers.length;
+            document.getElementById('profile-products').textContent = currentUser.products.length;
+            document.getElementById('profile-following').textContent = currentUser.following.length;
+            
+            // Update profile picture if exists
+            const profilePicElement = document.getElementById('user-profile-pic');
+            if (currentUser.profilePic) {
+                profilePicElement.innerHTML = `<img src="${currentUser.profilePic}" alt="${currentUser.username}">`;
+            } else {
+                profilePicElement.innerHTML = '<i class="fas fa-user"></i>';
+            }
+            
+            // Update profile preview picture (now properly sized)
+            const profilePicPreview = document.getElementById('profile-pic-preview');
+            if (currentUser.profilePic) {
+                profilePicPreview.innerHTML = `<img src="${currentUser.profilePic}" alt="Profile Picture">`;
+            } else {
+                profilePicPreview.innerHTML = '<i class="fas fa-user"></i>';
+            }
+            
+            // Update settings form
+            document.getElementById('settings-username').value = currentUser.username;
+            document.getElementById('settings-email').value = currentUser.email;
+            document.getElementById('settings-phone').value = currentUser.phone;
+            document.getElementById('settings-country').value = currentUser.country;
+            
+            // Update profile bio if exists
+            if (currentUser.bio) {
+                document.getElementById('profile-bio').value = currentUser.bio;
+            } else {
+                document.getElementById('profile-bio').value = '';
+            }
+            
+            // Clear existing social link inputs
+            document.getElementById('social-links-container').innerHTML = '';
+            
+            // Reset all social platform buttons to inactive
+            document.querySelectorAll('.social-platform').forEach(platform => {
+                platform.classList.remove('active');
+            });
+            
+            // Update social links if exists
+            if (currentUser.socialLinks && currentUser.socialLinks.length > 0) {
+                currentUser.socialLinks.forEach(link => {
+                    let platformName = '';
+                    if (link.includes('facebook')) platformName = 'facebook';
+                    else if (link.includes('twitter')) platformName = 'twitter';
+                    else if (link.includes('instagram')) platformName = 'instagram';
+                    else if (link.includes('linkedin')) platformName = 'linkedin';
+                    else if (link.includes('whatsapp')) platformName = 'whatsapp';
+                    else platformName = 'website';
+                    
+                    const platform = document.querySelector(`.social-platform[data-platform="${platformName}"]`);
+                    if (platform) {
+                        platform.classList.add('active');
+                        
+                        // Create input for this platform
+                        const inputGroup = document.createElement('div');
+                        inputGroup.className = 'form-group social-link-input active';
+                        inputGroup.id = `social-input-${platformName}`;
+                        
+                        let placeholder = '';
+                        let iconClass = '';
+                        
+                        switch (platformName) {
+                            case 'facebook':
+                                placeholder = 'https://facebook.com/yourpage';
+                                iconClass = 'fab fa-facebook-f';
+                                break;
+                            case 'twitter':
+                                placeholder = 'https://twitter.com/yourhandle';
+                                iconClass = 'fab fa-twitter';
+                                break;
+                            case 'instagram':
+                                placeholder = 'https://instagram.com/yourprofile';
+                                iconClass = 'fab fa-instagram';
+                                break;
+                            case 'linkedin':
+                                placeholder = 'https://linkedin.com/in/yourprofile';
+                                iconClass = 'fab fa-linkedin-in';
+                                break;
+                            case 'whatsapp':
+                                placeholder = 'https://wa.me/234XXXXXXXXXX';
+                                iconClass = 'fab fa-whatsapp';
+                                break;
+                            case 'website':
+                                placeholder = 'https://yourwebsite.com';
+                                iconClass = 'fas fa-globe';
+                                break;
+                        }
+                        
+                        inputGroup.innerHTML = `
+                            <label for="social-${platformName}">
+                                <i class="${iconClass}"></i> ${platform.textContent.trim()} URL
+                            </label>
+                            <input type="url" id="social-${platformName}" class="form-control" placeholder="${placeholder}" value="${link}">
+                        `;
+                        
+                        document.getElementById('social-links-container').appendChild(inputGroup);
+                    }
+                });
+            }
+        }
+        
+        // Handle profile picture upload
+        function handleProfilePicUpload(e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size should be less than 2MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentUser.profilePic = event.target.result;
+                    localStorage.setItem('gosell_users', JSON.stringify(users));
+                    
+                    // Update profile picture preview (now properly sized)
+                    const preview = document.getElementById('profile-pic-preview');
+                    preview.innerHTML = `<img src="${event.target.result}" alt="Profile Picture">`;
+                    
+                    // Update main profile picture
+                    const mainPic = document.getElementById('user-profile-pic');
+                    mainPic.innerHTML = `<img src="${event.target.result}" alt="${currentUser.username}">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Handle product submission
+        function handleProductSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('product-title').value;
+            const description = document.getElementById('product-description').value;
+            const category = document.getElementById('product-category').value;
+            const price = document.getElementById('product-price').value;
+            const location = document.getElementById('product-location').value;
+            const contact = document.getElementById('product-contact').value;
+            const link = document.getElementById('product-link').value;
+            
+            // Additional fields for online courses
+            let startDate = '';
+            let endDate = '';
+            
+            if (category === 'online-courses') {
+                startDate = document.getElementById('course-start-date').value;
+                endDate = document.getElementById('course-end-date').value;
+            }
+            
+            const images = [];
+            for (let i = 1; i <= 3; i++) {
+                const input = document.getElementById(`product-image-${i}`);
+                if (input.files && input.files[0]) {
+                    images.push(URL.createObjectURL(input.files[0]));
+                }
+            }
+            
+            if (images.length === 0) {
+                alert('Please upload at least one image');
+                return;
+            }
+            
+            const newProduct = {
+                id: Date.now().toString(),
+                title,
+                description,
+                category,
+                price,
+                location,
+                contact,
+                link,
+                images,
+                userId: currentUser.id,
+                username: currentUser.username,
+                userCountry: currentUser.country,
+                createdAt: new Date().toISOString(),
+                likes: 0,
+                dislikes: 0,
+                likedBy: [],
+                dislikedBy: []
+            };
+            
+            // Add course dates if it's an online course
+            if (category === 'online-courses') {
+                newProduct.startDate = startDate;
+                newProduct.endDate = endDate;
+            }
+            
+            products.push(newProduct);
+            currentUser.products.push(newProduct.id);
+            
+            // Award star for creating a product
+            currentUser.stars += 1;
+            
+            // Save to localStorage
+            localStorage.setItem('gosell_products', JSON.stringify(products));
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            
+            // Reset form
+            e.target.reset();
+            
+            // Clear image previews
+            for (let i = 1; i <= 3; i++) {
+                const uploadArea = document.getElementById(`upload-area-${i}`);
+                const uploadPreview = uploadArea.nextElementSibling;
+                
+                if (uploadPreview && uploadPreview.classList.contains('upload-preview')) {
+                    uploadPreview.remove();
+                    uploadArea.style.display = 'flex';
+                }
+            }
+            
+            // Hide additional upload areas
+            document.getElementById('upload-area-2').style.display = 'none';
+            document.getElementById('upload-area-3').style.display = 'none';
+            
+            // Hide course dates if shown
+            document.getElementById('course-dates-group').style.display = 'none';
+            
+            // Update user info
+            updateUserInfo();
+            
+            // Show success message
+            alert('Product listed successfully! You earned 1 star.');
+            
+            // Load user's products
+            loadUserProducts();
+        }
+        
+        // Setup image uploads for product creation
+        function setupImageUploads() {
+            for (let i = 1; i <= 3; i++) {
+                const uploadArea = document.getElementById(`upload-area-${i}`);
+                const fileInput = document.getElementById(`product-image-${i}`);
+                
+                uploadArea.addEventListener('click', () => fileInput.click());
+                
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = (event) => {
+                            // Create preview
+                            const preview = document.createElement('div');
+                            preview.className = 'upload-preview';
+                            
+                            const img = document.createElement('img');
+                            img.src = event.target.result;
+                            
+                            const removeBtn = document.createElement('div');
+                            removeBtn.className = 'remove-image';
+                            removeBtn.innerHTML = '&times;';
+                            removeBtn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                preview.remove();
+                                uploadArea.style.display = 'flex';
+                                fileInput.value = '';
+                                
+                                if (i === 1) {
+                                    document.getElementById('upload-area-2').style.display = 'none';
+                                    document.getElementById('upload-area-3').style.display = 'none';
+                                } else if (i === 2) {
+                                    document.getElementById('upload-area-3').style.display = 'none';
+                                }
+                            });
+                            
+                            preview.appendChild(img);
+                            preview.appendChild(removeBtn);
+                            
+                            uploadArea.parentNode.insertBefore(preview, uploadArea.nextSibling);
+                            uploadArea.style.display = 'none';
+                            
+                            if (i < 3) {
+                                document.getElementById(`upload-area-${i + 1}`).style.display = 'flex';
+                            }
+                        };
+                        
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+            }
+        }
+        
+        // Load marketplace products
+        function loadMarketplace() {
+            const marketplaceProducts = document.getElementById('marketplace-products');
+            const categoryFilter = document.getElementById('marketplace-category').value;
+            
+            let filteredProducts = products;
+            if (categoryFilter) {
+                filteredProducts = products.filter(p => p.category === categoryFilter);
+            }
+            
+            marketplaceProducts.innerHTML = '';
+            
+            if (filteredProducts.length === 0) {
+                marketplaceProducts.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6c757d;">No products available in this category</p>';
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                const isLiked = product.likedBy.includes(currentUser.id);
+                const isDisliked = product.dislikedBy.includes(currentUser.id);
+                
+                // Additional info for online courses
+                let courseDates = '';
+                if (product.category === 'online-courses' && product.startDate && product.endDate) {
+                    const startDate = new Date(product.startDate).toLocaleDateString();
+                    const endDate = new Date(product.endDate).toLocaleDateString();
+                    courseDates = `<div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.5rem;">
+                        <i class="far fa-calendar-alt"></i> ${startDate} - ${endDate}
+                    </div>`;
+                }
+                
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.images[0]}" alt="${product.title}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.category === 'online-courses' ? 'Course: ' : ''}${product.title}</h3>
+                        ${courseDates}
+                        <p class="product-description">${product.description}</p>
+                        <div class="like-dislike-container">
+                            <button class="like-btn ${isLiked ? 'liked' : ''}" data-product-id="${product.id}">
+                                <i class="fas fa-thumbs-up"></i> ${product.likes}
+                            </button>
+                            <button class="dislike-btn ${isDisliked ? 'disliked' : ''}" data-product-id="${product.id}">
+                                <i class="fas fa-thumbs-down"></i> ${product.dislikes}
+                            </button>
+                        </div>
+                        <div class="product-meta">
+                            <span><i class="fas fa-phone"></i> ${product.contact}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${product.location}</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-sm btn-view view-product" data-id="${product.id}">View Details</button>
+                            ${product.userId === currentUser.id ? `
+                            <button class="btn btn-sm btn-danger delete-product" data-id="${product.id}">Delete</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                marketplaceProducts.appendChild(productCard);
+            });
+            
+            document.querySelectorAll('.view-product').forEach(btn => {
+                btn.addEventListener('click', () => viewProduct(btn.getAttribute('data-id')));
+            });
+            
+            document.querySelectorAll('.delete-product').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        const productId = btn.getAttribute('data-id');
+                        deleteProduct(productId);
+                    }
+                });
+            });
+            
+            // Like button functionality
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const product = products.find(p => p.id === productId);
+                    
+                    if (product.likedBy.includes(currentUser.id)) {
+                        // Already liked - remove like
+                        product.likedBy = product.likedBy.filter(id => id !== currentUser.id);
+                        product.likes--;
+                        this.classList.remove('liked');
+                    } else {
+                        // Not liked - add like
+                        if (product.dislikedBy.includes(currentUser.id)) {
+                            product.dislikedBy = product.dislikedBy.filter(id => id !== currentUser.id);
+                            product.dislikes--;
+                            const dislikeBtn = this.parentElement.querySelector('.dislike-btn');
+                            dislikeBtn.classList.remove('disliked');
+                        }
+                        product.likedBy.push(currentUser.id);
+                        product.likes++;
+                        this.classList.add('liked');
+                    }
+                    
+                    this.innerHTML = `<i class="fas fa-thumbs-up"></i> ${product.likes}`;
+                    const dislikeBtn = this.parentElement.querySelector('.dislike-btn');
+                    dislikeBtn.innerHTML = `<i class="fas fa-thumbs-down"></i> ${product.dislikes}`;
+                    
+                    localStorage.setItem('gosell_products', JSON.stringify(products));
+                });
+            });
+            
+            // Dislike button functionality
+            document.querySelectorAll('.dislike-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const product = products.find(p => p.id === productId);
+                    
+                    if (product.dislikedBy.includes(currentUser.id)) {
+                        // Already disliked - remove dislike
+                        product.dislikedBy = product.dislikedBy.filter(id => id !== currentUser.id);
+                        product.dislikes--;
+                        this.classList.remove('disliked');
+                    } else {
+                        // Not disliked - add dislike
+                        if (product.likedBy.includes(currentUser.id)) {
+                            product.likedBy = product.likedBy.filter(id => id !== currentUser.id);
+                            product.likes--;
+                            const likeBtn = this.parentElement.querySelector('.like-btn');
+                            likeBtn.classList.remove('liked');
+                        }
+                        product.dislikedBy.push(currentUser.id);
+                        product.dislikes++;
+                        this.classList.add('disliked');
+                    }
+                    
+                    this.innerHTML = `<i class="fas fa-thumbs-down"></i> ${product.dislikes}`;
+                    const likeBtn = this.parentElement.querySelector('.like-btn');
+                    likeBtn.innerHTML = `<i class="fas fa-thumbs-up"></i> ${product.likes}`;
+                    
+                    localStorage.setItem('gosell_products', JSON.stringify(products));
+                });
+            });
+            
+            document.getElementById('marketplace-category').addEventListener('change', loadMarketplace);
+        }
+        
+        // View product details
+        function viewProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            document.getElementById('product-modal-title').textContent = 
+                product.category === 'online-courses' ? 'Course Details' : 'Product Details';
+            
+            const productContent = document.getElementById('product-modal-content');
+            
+            // Additional info for online courses
+            let courseDates = '';
+            if (product.category === 'online-courses' && product.startDate && product.endDate) {
+                const startDate = new Date(product.startDate).toLocaleDateString();
+                const endDate = new Date(product.endDate).toLocaleDateString();
+                courseDates = `
+                    <div style="margin-bottom: 1rem;">
+                        <p style="font-weight: 600; margin-bottom: 0.2rem;">Course Duration</p>
+                        <p>${startDate} - ${endDate}</p>
+                    </div>
+                `;
+            }
+            
+            const isLiked = product.likedBy.includes(currentUser.id);
+            const isDisliked = product.dislikedBy.includes(currentUser.id);
+            
+            productContent.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem; overflow-x: auto;">
+                        ${product.images.map(img => `<img src="${img}" style="height: 200px; border-radius: 5px;">`).join('')}
+                    </div>
+                    <p style="margin-bottom: 1rem;">${product.description}</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <p style="font-weight: 600; margin-bottom: 0.2rem;">Category</p>
+                            <p>${product.category}</p>
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; margin-bottom: 0.2rem;">${product.category === 'online-courses' ? 'Registration Fee' : 'Price'}</p>
+                            <p>${product.price}</p>
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; margin-bottom: 0.2rem;">Seller</p>
+                            <p>${product.username}</p>
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; margin-bottom: 0.2rem;">Location</p>
+                            <p>${product.location}</p>
+                        </div>
+                    </div>
+                    ${courseDates}
+                    <div style="margin-bottom: 1rem;">
+                        <p style="font-weight: 600; margin-bottom: 0.2rem;">Contact</p>
+                        <p>${product.contact}</p>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <p style="font-weight: 600; margin-bottom: 0.2rem;">Contact Link</p>
+                        <a href="${product.link}" target="_blank">${product.link}</a>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="like-btn ${isLiked ? 'liked' : ''}" id="like-product" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-thumbs-up"></i> ${product.likes}
+                        </button>
+                        <button class="dislike-btn ${isDisliked ? 'disliked' : ''}" id="dislike-product" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-thumbs-down"></i> ${product.dislikes}
+                        </button>
+                    </div>
+                    ${product.userId === currentUser.id ? `
+                    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-danger" id="delete-product-modal" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-trash"></i> Delete Product
+                        </button>
+                        <button class="btn btn-primary" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Boost My Product: ${product.title}&body=I would like to boost my product: ${product.title}'">
+                            <i class="fas fa-rocket"></i> Boost Product
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            if (product.userId === currentUser.id) {
+                document.getElementById('delete-product-modal').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        deleteProduct(product.id);
+                        productModal.style.display = 'none';
+                    }
+                });
+            }
+            
+            document.getElementById('like-product').addEventListener('click', () => {
+                const btn = document.getElementById('like-product');
+                const dislikeBtn = document.getElementById('dislike-product');
+                
+                if (product.likedBy.includes(currentUser.id)) {
+                    // Already liked - remove like
+                    product.likedBy = product.likedBy.filter(id => id !== currentUser.id);
+                    product.likes--;
+                    btn.classList.remove('liked');
+                } else {
+                    // Not liked - add like
+                    if (product.dislikedBy.includes(currentUser.id)) {
+                        product.dislikedBy = product.dislikedBy.filter(id => id !== currentUser.id);
+                        product.dislikes--;
+                        dislikeBtn.classList.remove('disliked');
+                    }
+                    product.likedBy.push(currentUser.id);
+                    product.likes++;
+                    btn.classList.add('liked');
+                }
+                
+                btn.innerHTML = `<i class="fas fa-thumbs-up"></i> ${product.likes}`;
+                dislikeBtn.innerHTML = `<i class="fas fa-thumbs-down"></i> ${product.dislikes}`;
+                
+                localStorage.setItem('gosell_products', JSON.stringify(products));
+            });
+            
+            document.getElementById('dislike-product').addEventListener('click', () => {
+                const btn = document.getElementById('dislike-product');
+                const likeBtn = document.getElementById('like-product');
+                
+                if (product.dislikedBy.includes(currentUser.id)) {
+                    // Already disliked - remove dislike
+                    product.dislikedBy = product.dislikedBy.filter(id => id !== currentUser.id);
+                    product.dislikes--;
+                    btn.classList.remove('disliked');
+                } else {
+                    // Not disliked - add dislike
+                    if (product.likedBy.includes(currentUser.id)) {
+                        product.likedBy = product.likedBy.filter(id => id !== currentUser.id);
+                        product.likes--;
+                        likeBtn.classList.remove('liked');
+                    }
+                    product.dislikedBy.push(currentUser.id);
+                    product.dislikes++;
+                    btn.classList.add('disliked');
+                }
+                
+                btn.innerHTML = `<i class="fas fa-thumbs-down"></i> ${product.dislikes}`;
+                likeBtn.innerHTML = `<i class="fas fa-thumbs-up"></i> ${product.likes}`;
+                
+                localStorage.setItem('gosell_products', JSON.stringify(products));
+            });
+            
+            productModal.style.display = 'flex';
+        }
+        
+        // Load user's products
+        function loadUserProducts() {
+            const userProductsContainer = document.getElementById('user-products');
+            
+            const userProducts = products.filter(p => p.userId === currentUser.id);
+            
+            userProductsContainer.innerHTML = '';
+            
+            if (userProducts.length === 0) {
+                userProductsContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6c757d;">You haven\'t listed any products yet. Create your first product!</p>';
+                return;
+            }
+            
+            userProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                // Additional info for online courses
+                let courseDates = '';
+                if (product.category === 'online-courses' && product.startDate && product.endDate) {
+                    const startDate = new Date(product.startDate).toLocaleDateString();
+                    const endDate = new Date(product.endDate).toLocaleDateString();
+                    courseDates = `<div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.5rem;">
+                        <i class="far fa-calendar-alt"></i> ${startDate} - ${endDate}
+                    </div>`;
+                }
+                
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.images[0]}" alt="${product.title}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.category === 'online-courses' ? 'Course: ' : ''}${product.title}</h3>
+                        ${courseDates}
+                        <p class="product-description">${product.description}</p>
+                        <div class="like-dislike-container">
+                            <button class="like-btn ${product.likedBy.includes(currentUser.id) ? 'liked' : ''}">
+                                <i class="fas fa-thumbs-up"></i> ${product.likes}
+                            </button>
+                            <button class="dislike-btn ${product.dislikedBy.includes(currentUser.id) ? 'disliked' : ''}">
+                                <i class="fas fa-thumbs-down"></i> ${product.dislikes}
+                            </button>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-sm btn-view view-product" data-id="${product.id}">View</button>
+                            <button class="btn btn-sm btn-danger delete-product" data-id="${product.id}">Delete</button>
+                            <button class="btn btn-sm btn-primary" onclick="window.location.href='mailto:gosellmarket@gmail.com?subject=Boost My Product: ${product.title}&body=I would like to boost my product: ${product.title}'">
+                                <i class="fas fa-rocket"></i> Boost
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                userProductsContainer.appendChild(productCard);
+            });
+            
+            document.querySelectorAll('.view-product').forEach(btn => {
+                btn.addEventListener('click', () => viewProduct(btn.getAttribute('data-id')));
+            });
+            
+            document.querySelectorAll('.delete-product').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        const productId = btn.getAttribute('data-id');
+                        deleteProduct(productId);
+                    }
+                });
+            });
+        }
+        
+        // Delete a product
+        function deleteProduct(productId) {
+            products = products.filter(p => p.id !== productId);
+            currentUser.products = currentUser.products.filter(id => id !== productId);
+            
+            localStorage.setItem('gosell_products', JSON.stringify(products));
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            
+            loadUserProducts();
+            updateUserInfo();
+            
+            alert('Product deleted successfully');
+        }
+        
+        // Load leaderboard
+        function loadLeaderboard() {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            const searchInput = document.getElementById('leaderboard-search');
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            const sortedUsers = [...users].sort((a, b) => b.stars - a.stars);
+            
+            leaderboardBody.innerHTML = '';
+            
+            if (sortedUsers.length === 0) {
+                leaderboardBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">No users found</td></tr>';
+                return;
+            }
+            
+            sortedUsers.forEach((user, index) => {
+                // Skip if search term doesn't match username
+                if (searchTerm && !user.username.toLowerCase().includes(searchTerm)) {
+                    return;
+                }
+                
+                const isFollowing = currentUser.following.includes(user.id) && user.id !== currentUser.id;
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="${rankClass}">${index + 1}</td>
+                    <td>
+                        <div class="leaderboard-user">
+                            <div class="profile-pic" style="width: 40px; height: 40px;">
+                                ${user.profilePic ? 
+                                    `<img src="${user.profilePic}" alt="${user.username}">` : 
+                                    `<i class="fas fa-user"></i>`}
+                            </div>
+                            <div>
+                                <div>${user.username}</div>
+                                <div style="font-size: 0.8rem; color: #6c757d;">${user.country}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.stars}</td>
+                    <td>${user.followers.length}</td>
+                    <td>${user.products.length}</td>
+                    <td>
+                        <div class="leaderboard-actions">
+                            ${user.id !== currentUser.id ? `
+                            <button class="btn btn-sm ${isFollowing ? 'btn-danger' : 'btn-primary'}" data-user-id="${user.id}">
+                                ${isFollowing ? 'Unfollow' : 'Follow'}
+                            </button>
+                            ` : ''}
+                            <button class="btn btn-sm btn-view view-profile" data-user-id="${user.id}">View</button>
+                        </div>
+                    </td>
+                `;
+                
+                leaderboardBody.appendChild(row);
+            });
+            
+            // If no users matched the search
+            if (leaderboardBody.children.length === 0) {
+                leaderboardBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">No users found matching your search</td></tr>';
+            }
+            
+            document.querySelectorAll('.leaderboard-actions button:first-child').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userId = btn.getAttribute('data-user-id');
+                    toggleFollow(user.id, btn);
+                    btn.textContent = btn.className.includes('btn-danger') ? 'Unfollow' : 'Follow';
+                });
+            });
+            
+            document.querySelectorAll('.view-profile').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userId = btn.getAttribute('data-user-id');
+                    viewUserProfile(userId);
+                });
+            });
+            
+            // Search functionality
+            searchInput.addEventListener('input', () => {
+                loadLeaderboard();
+            });
+        }
+        
+        // Toggle follow/unfollow a user
+        function toggleFollow(userId, button) {
+            if (userId === currentUser.id) return;
+            
+            const userToFollow = users.find(u => u.id === userId);
+            if (!userToFollow) return;
+            
+            const isFollowing = currentUser.following.includes(userId);
+            
+            if (isFollowing) {
+                currentUser.following = currentUser.following.filter(id => id !== userId);
+                userToFollow.followers = userToFollow.followers.filter(id => id !== currentUser.id);
+                userToFollow.stars -= 1;
+                
+                button.textContent = 'Follow';
+                button.className = 'btn btn-sm btn-primary';
+            } else {
+                currentUser.following.push(userId);
+                userToFollow.followers.push(currentUser.id);
+                userToFollow.stars += 1;
+                
+                button.textContent = 'Unfollow';
+                button.className = 'btn btn-sm btn-danger';
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            
+            updateUserInfo();
+            loadLeaderboard();
+        }
+        
+        // View user profile
+        function viewUserProfile(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('user-profile-modal-title').textContent = `${user.username}'s Profile`;
+            
+            const userProducts = products.filter(p => p.userId === user.id);
+            const isFollowing = currentUser.following.includes(userId) && userId !== currentUser.id;
+            
+            const userContent = document.getElementById('user-profile-modal-content');
+            userContent.innerHTML = `
+                <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+                    <div class="profile-pic" style="width: 100px; height: 100px;">
+                        ${user.profilePic ? 
+                            `<img src="${user.profilePic}" alt="${user.username}">` : 
+                            `<i class="fas fa-user" style="font-size: 3rem; color: #6c757d; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"></i>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 0.5rem;">${user.username}</h3>
+                        <p style="margin-bottom: 0.5rem; color: #6c757d;">${user.country}</p>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-weight: 600;">${user.stars}</div>
+                                <div style="font-size: 0.8rem;">Stars</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${user.followers.length}</div>
+                                <div style="font-size: 0.8rem;">Followers</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${user.products.length}</div>
+                                <div style="font-size: 0.8rem;">Products</div>
+                            </div>
+                        </div>
+                        ${userId !== currentUser.id ? `
+                        <div style="margin-bottom: 1rem;">
+                            <button class="btn ${isFollowing ? 'btn-danger' : 'btn-primary'}" id="follow-user-btn" style="margin-right: 0.5rem;">
+                                ${isFollowing ? 'Unfollow' : 'Follow'}
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                ${user.bio ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem;">About</h4>
+                    <p>${user.bio}</p>
+                </div>
+                ` : ''}
+                
+                ${user.socialLinks && user.socialLinks.length > 0 ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem;">Social Links</h4>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        ${user.socialLinks.map(link => `
+                            <a href="${link}" target="_blank" style="color: var(--primary); text-decoration: none;">${link}</a>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Products (${userProducts.length})</h4>
+                    ${userProducts.length > 0 ? `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                        ${userProducts.slice(0, 4).map(product => `
+                            <div style="border: 1px solid #e9ecef; border-radius: 5px; overflow: hidden; cursor: pointer;" class="view-product" data-id="${product.id}">
+                                <div style="height: 120px; background-color: #e9ecef; overflow: hidden;">
+                                    <img src="${product.images[0]}" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="padding: 0.5rem;">
+                                    <p style="font-weight: 600; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${product.title}</p>
+                                    <p style="font-size: 0.8rem; color: #6c757d;">${product.price || 'Price not specified'}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${userProducts.length > 4 ? `
+                    <p style="text-align: center; margin-top: 1rem;">
+                        <a href="#" id="view-all-products" style="color: var(--primary);">View all ${userProducts.length} products</a>
+                    </p>
+                    ` : ''}
+                    ` : '<p style="color: #6c757d;">No products listed yet</p>'}
+                </div>
+            `;
+            
+            if (userId !== currentUser.id) {
+                document.getElementById('follow-user-btn').addEventListener('click', () => {
+                    const btn = document.getElementById('follow-user-btn');
+                    toggleFollow(user.id, btn);
+                    btn.textContent = btn.className.includes('btn-danger') ? 'Unfollow' : 'Follow';
+                });
+            }
+            
+            if (userProducts.length > 4) {
+                document.getElementById('view-all-products').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    userProfileModal.style.display = 'none';
+                    showDashboardSection('marketplace');
+                });
+            }
+            
+            document.querySelectorAll('.view-product').forEach(el => {
+                el.addEventListener('click', () => {
+                    const productId = el.getAttribute('data-id');
+                    userProfileModal.style.display = 'none';
+                    viewProduct(productId);
+                });
+            });
+            
+            userProfileModal.style.display = 'flex';
+        }
+        
+        // Handle profile update
+        function handleProfileUpdate() {
+            const bio = document.getElementById('profile-bio').value;
+            
+            // Get all active social links
+            const socialLinks = [];
+            const activePlatforms = document.querySelectorAll('.social-platform.active');
+            
+            activePlatforms.forEach(platform => {
+                const platformName = platform.getAttribute('data-platform');
+                const input = document.getElementById(`social-${platformName}`);
+                if (input && input.value) {
+                    socialLinks.push(input.value);
+                }
+            });
+            
+            currentUser.bio = bio;
+            currentUser.socialLinks = socialLinks;
+            
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            
+            alert('Profile updated successfully');
+        }
+        
+        // Handle settings update
+        function handleSettingsUpdate(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('settings-username').value;
+            const email = document.getElementById('settings-email').value;
+            const phone = document.getElementById('settings-phone').value;
+            const country = document.getElementById('settings-country').value;
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword) {
+                if (currentPassword !== currentUser.password) {
+                    alert('Current password is incorrect');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match');
+                    return;
+                }
+                
+                currentUser.password = newPassword;
+            }
+            
+            // Check for duplicate username (case-insensitive, excluding current user)
+            if (users.some(u => 
+                u.id !== currentUser.id && 
+                u.username.toLowerCase() === username.toLowerCase()
+            )) {
+                alert('Username already in use by another account');
+                return;
+            }
+            
+            if (users.some(u => u.email === email && u.id !== currentUser.id)) {
+                alert('Email already in use by another account');
+                return;
+            }
+            
+            currentUser.username = username;
+            currentUser.email = email;
+            currentUser.phone = phone;
+            currentUser.country = country;
+            
+            localStorage.setItem('gosell_users', JSON.stringify(users));
+            
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+            
+            updateUserInfo();
+            
+            alert('Settings updated successfully');
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <title>Gosell - Buy, Sell, Earn Stars</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    
+    
+    <style>
+        /* [Keep all your existing CSS styles exactly as they are] */
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            /* ... rest of your CSS ... */
+        }
+        
+        /* ... all other CSS rules ... */
+    </style>
+</head>
+<body>
+    <!-- [Keep all your existing HTML structure exactly as it is] -->
+    <!-- Floating Stars Background -->
+    <div class="floating-stars" id="floating-stars"></div>
+    
+    <!-- Home Screen -->
+    <div id="home-screen">
+        <!-- ... rest of your HTML ... -->
+    </div>
+    
+    <!-- User Dashboard -->
+    <div id="user-dashboard" class="dashboard" style="display: none;">
+        <!-- ... rest of your dashboard HTML ... -->
+    </div>
+    
+    <!-- [Keep all your modal HTML exactly as it is] -->
+    
+   <script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyByynmkGyRKjPZpKcESCa43YlMI-MLfAVs",
+        authDomain: "gosellmarket-b9194.firebaseapp.com",
+        projectId: "gosellmarket-b9194",
+        storageBucket: "gosellmarket-b9194.appspot.com",
+        messagingSenderId: "280663018627",
+        appId: "1:280663018627:web:e8b8f65d5a568870c15fb6"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    // Global variables
+    let currentUser = null;
+    let users = [];
+    let products = [];
+    let activeInputElement = null;
+
+    // Initialize the app
+    function init() {
+        // Create floating stars
+        createFloatingStars();
+
+        // Event listeners for UI elements (keep your existing ones)
+        setupEventListeners();
+
+        // Check auth state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                loadUserData(user.uid);
+            } else {
+                // No user is signed in
+                document.getElementById('home-screen').style.display = 'block';
+                document.getElementById('user-dashboard').style.display = 'none';
+            }
+        });
+
+        // Load initial data
+        loadAllUsers();
+        loadAllProducts();
+    }
+
+    // Firebase Data Functions
+    function loadUserData(userId) {
+        database.ref('users/' + userId).on('value', (snapshot) => {
+            currentUser = snapshot.val();
+            if (currentUser) {
+                document.getElementById('home-screen').style.display = 'none';
+                document.getElementById('user-dashboard').style.display = 'block';
+                updateUserInfo();
+                showDashboardSection('profile');
+            }
+        });
+    }
+
+    function loadAllUsers() {
+        database.ref('users').on('value', (snapshot) => {
+            users = [];
+            snapshot.forEach((childSnapshot) => {
+                users.push(childSnapshot.val());
+            });
+            if (document.getElementById('leaderboard-section').style.display === 'block') {
+                loadLeaderboard();
+            }
+        });
+    }
+
+    function loadAllProducts() {
+        database.ref('products').on('value', (snapshot) => {
+            products = [];
+            snapshot.forEach((childSnapshot) => {
+                products.push(childSnapshot.val());
+            });
+            if (document.getElementById('marketplace-section').style.display === 'block') {
+                loadMarketplace();
+            }
+            if (document.getElementById('my-products-section').style.display === 'block') {
+                loadUserProducts();
+            }
+        });
+    }
+
+    // Authentication Functions
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            document.getElementById('login-modal').style.display = 'none';
+        } catch (error) {
+            alert('Login error: ' + error.message);
+        }
+    }
+
+    async function handleSignup(e) {
+        e.preventDefault();
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const username = document.getElementById('signup-username').value;
+        const phone = document.getElementById('signup-phone').value;
+        const country = document.getElementById('signup-country').value;
+
+        try {
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            
+            const user = {
+                id: userCredential.user.uid,
+                username,
+                email,
+                phone,
+                country,
+                stars: 5,
+                followers: {},
+                following: {},
+                products: {},
+                bio: '',
+                socialLinks: [],
+                profilePic: null,
+                joined: new Date().toISOString()
+            };
+
+            await database.ref('users/' + user.id).set(user);
+            document.getElementById('signup-modal').style.display = 'none';
+            alert('Account created successfully! You received 5 welcome bonus stars.');
+        } catch (error) {
+            alert('Signup error: ' + error.message);
+        }
+    }
+
+    function logout() {
+        auth.signOut().then(() => {
+            currentUser = null;
+            document.getElementById('user-dashboard').style.display = 'none';
+            document.getElementById('home-screen').style.display = 'block';
+            document.getElementById('login-form').reset();
+            document.getElementById('signup-form').reset();
+        });
+    }
+
+    // Product Functions
+    async function handleProductSubmit(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('product-title').value;
+        const description = document.getElementById('product-description').value;
+        const category = document.getElementById('product-category').value;
+        const price = document.getElementById('product-price').value;
+        const location = document.getElementById('product-location').value;
+        const contact = document.getElementById('product-contact').value;
+        const link = document.getElementById('product-link').value;
+
+        // Get image URLs (you'll need to implement image upload to Firebase Storage)
+        const images = []; // This should be populated with actual image URLs
+        
+        const newProduct = {
+            id: database.ref().child('products').push().key,
+            title,
+            description,
+            category,
+            price,
+            location,
+            contact,
+            link,
+            images,
+            userId: currentUser.id,
+            username: currentUser.username,
+            userCountry: currentUser.country,
+            createdAt: new Date().toISOString(),
+            likes: 0,
+            dislikes: 0,
+            likedBy: {},
+            dislikedBy: {}
+        };
+
+        try {
+            // Save product
+            await database.ref('products/' + newProduct.id).set(newProduct);
+            
+            // Add to user's products
+            await database.ref('users/' + currentUser.id + '/products/' + newProduct.id).set(true);
+            
+            // Increment user's stars
+            await database.ref('users/' + currentUser.id + '/stars').transaction((currentStars) => {
+                return (currentStars || 0) + 1;
+            });
+
+            // Reset form
+            e.target.reset();
+            alert('Product listed successfully! You earned 1 star.');
+        } catch (error) {
+            alert('Error saving product: ' + error.message);
+        }
+    }
+
+    // Leaderboard Functions
+    function loadLeaderboard() {
+        const leaderboardBody = document.getElementById('leaderboard-body');
+        leaderboardBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">Loading leaderboard...</td></tr>';
+
+        database.ref('users').orderByChild('stars').limitToLast(10).once('value')
+            .then((snapshot) => {
+                const leaderboardUsers = [];
+                snapshot.forEach((childSnapshot) => {
+                    leaderboardUsers.push(childSnapshot.val());
+                });
+
+                leaderboardUsers.sort((a, b) => b.stars - a.stars);
+                updateLeaderboardUI(leaderboardUsers);
+            });
+    }
+
+    function updateLeaderboardUI(users) {
+        const leaderboardBody = document.getElementById('leaderboard-body');
+        leaderboardBody.innerHTML = '';
+
+        users.forEach((user, index) => {
+            const isFollowing = currentUser.following && currentUser.following[user.id];
+            const rankClass = index < 3 ? `rank-${index + 1}` : '';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="${rankClass}">${index + 1}</td>
+                <td>
+                    <div class="leaderboard-user">
+                        <div class="profile-pic" style="width: 40px; height: 40px;">
+                            ${user.profilePic ? 
+                                `<img src="${user.profilePic}" alt="${user.username}">` : 
+                                `<i class="fas fa-user"></i>`}
+                        </div>
+                        <div>
+                            <div>${user.username}</div>
+                            <div style="font-size: 0.8rem; color: #6c757d;">${user.country}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${user.stars}</td>
+                <td>${user.followers ? Object.keys(user.followers).length : 0}</td>
+                <td>${user.products ? Object.keys(user.products).length : 0}</td>
+                <td>
+                    <div class="leaderboard-actions">
+                        ${user.id !== currentUser.id ? `
+                        <button class="btn btn-sm ${isFollowing ? 'btn-danger' : 'btn-primary'}" data-user-id="${user.id}">
+                            ${isFollowing ? 'Unfollow' : 'Follow'}
+                        </button>
+                        ` : ''}
+                        <button class="btn btn-sm btn-view view-profile" data-user-id="${user.id}">View</button>
+                    </div>
+                </td>
+            `;
+            leaderboardBody.appendChild(row);
+        });
+
+        // Add event listeners for follow/unfollow
+        document.querySelectorAll('.leaderboard-actions button:first-child').forEach(btn => {
+            btn.addEventListener('click', () => toggleFollow(btn.getAttribute('data-user-id'), btn);
+        });
+
+        // Add event listeners for view profile
+        document.querySelectorAll('.view-profile').forEach(btn => {
+            btn.addEventListener('click', () => viewUserProfile(btn.getAttribute('data-user-id')));
+        });
+    }
+
+    async function toggleFollow(userId, button) {
+        if (userId === currentUser.id) return;
+
+        const isFollowing = currentUser.following && currentUser.following[userId];
+        const updates = {};
+
+        if (isFollowing) {
+            // Unfollow
+            updates[`users/${currentUser.id}/following/${userId}`] = null;
+            updates[`users/${userId}/followers/${currentUser.id}`] = null;
+            updates[`users/${userId}/stars`] = firebase.database.ServerValue.increment(-1);
+        } else {
+            // Follow
+            updates[`users/${currentUser.id}/following/${userId}`] = true;
+            updates[`users/${userId}/followers/${currentUser.id}`] = true;
+            updates[`users/${userId}/stars`] = firebase.database.ServerValue.increment(1);
+        }
+
+        try {
+            await database.ref().update(updates);
+            button.textContent = isFollowing ? 'Follow' : 'Unfollow';
+            button.className = isFollowing ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-danger';
+        } catch (error) {
+            alert('Error updating follow status: ' + error.message);
+        }
+    }
+
+    // Paste Functionality
+    function setupClipboardHandling() {
+        document.addEventListener('focusin', function(e) {
+            if (e.target.matches('input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea')) {
+                activeInputElement = e.target;
+            }
+        });
+
+        document.addEventListener('paste', async function(e) {
+            if (e.target.matches('input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea')) {
+                try {
+                    e.preventDefault();
+                    const clipboardItems = await navigator.clipboard.read();
+                    
+                    for (const clipboardItem of clipboardItems) {
+                        for (const type of clipboardItem.types) {
+                            if (type === 'text/plain') {
+                                const blob = await clipboardItem.getType(type);
+                                const text = await blob.text();
+                                
+                                // Auto-paste URLs with proper formatting
+                                if (e.target.type === 'url' && !text.match(/^https?:\/\//)) {
+                                    e.target.value = 'https://' + text;
+                                } else {
+                                    e.target.value = text;
+                                }
+                                return;
+                            }
+                        }
+                    }
+                } catch (err) {
+                    // Fallback to regular paste
+                    const text = e.clipboardData.getData('text/plain');
+                    e.target.value = text;
+                }
+            }
+        });
+    }
+
+    // Initialize the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Keep all your existing UI helper functions (createFloatingStars, showDashboardSection, etc.)
+    // Keep all your existing modal functions (viewProduct, viewUserProfile, etc.)
+    // Keep all your existing DOM manipulation functions (updateUserInfo, loadMarketplace, etc.)
+</script>
+</body>
+</html>
